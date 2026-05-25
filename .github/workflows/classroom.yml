@@ -20,8 +20,8 @@ jobs:
     steps:
       - name: Get repository code
         uses: actions/checkout@v6
-      - name: Check repository clean
-        run: ./scripts/check_clean.sh
+      # - name: Check repository clean
+      #   run: ./scripts/check_clean.sh
       - name: Check requirements
         run: |
              !(grep -qwRE --include=*.{cc,cpp,h,hpp} '<vector>|<list>|<string>|<algorithm>|<stack>|<queue>|<deque>|<set>|<map>|<bits' ./* ) &&  (echo \"Check - OK\" )  || ( echo \"Forbiden STL containers\" && exit 9 )

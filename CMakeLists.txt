@@ -4,8 +4,6 @@ project(findsubstr)
 
 set(SRC_LIST findsubstr.cpp)
 
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic-errors -Wall -Wextra -Werror -gdwarf-4 -std=c++20")
-set(CMAKE_CXX_STANDARD 20)
-add_compile_options(/W4 /WX)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic-errors -Wall -Wextra -Werror -gdwarf-4 -std=c++20")
 
 add_executable(${PROJECT_NAME} ${SRC_LIST})

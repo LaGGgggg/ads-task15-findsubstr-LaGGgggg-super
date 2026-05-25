@@ -1,0 +1,191 @@
+name: FF Workflow
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '.github/workflows/*'
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
+
+jobs:
+  Checking-Solution:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Get repository code
+        uses: actions/checkout@v6
+      - name: Check repository clean
+        run: ./scripts/check_clean.sh
+      - name: Check requirements
+        run: |
+             !(grep -qwRE --include=*.{cc,cpp,h,hpp} '<vector>|<list>|<string>|<algorithm>|<stack>|<queue>|<deque>|<set>|<map>|<bits' ./* ) &&  (echo \"Check - OK\" )  || ( echo \"Forbiden STL containers\" && exit 9 )
+      # - name: Check code style
+      #   run: |
+      #        clang-format --version
+      #        find "." \( -name '*.cpp' -o -name '*.h*' \) -print0 | xargs -0 clang-format --dry-run --Werror --verbose
+      # - name: Code linting
+      #   uses: amcp-pit/cpp-linter@v1
+      #   with:
+      #     extra-args-before: '-xc++'
+      #     extra-args: '-std=c++20'
+      #     after-args: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
+      - name: Build
+        run: |
+          set -e
+
+          ROOTDIR="$GITHUB_WORKSPACE"
+
+          cmake -S "$ROOTDIR" -B "$ROOTDIR/build"
+          cmake --build "$ROOTDIR/build"
+      - name: Test 1
+        id: test-1
+        uses: classroom-resources/autograding-io-grader@v1
+        with:
+          test-name: Test 1 (Num)
+          setup-command: 'unzip -q tests/test.zip -d tests/'
+          command: "timeout 0.2 ./build/findsubstr \"/1656/\" tests/log.txt"
+          input: ""
+          expected-output: "54380"
+          comparison-method: exact
+          timeout: 1
+          max-score: 1
+      - name: Test 2
+        id: test-2
+        uses: classroom-resources/autograding-io-grader@v1
+        with:
+          test-name: Test 2 (Jorge)
+          setup-command: ''
+          command: "timeout 0.2 ./build/findsubstr 37df7a98468d1f7a tests/log.txt"
+          input: ""
+          expected-output: "54381"
+          comparison-method: exact
+          timeout: 1
+          max-score: 1
+      - name: Test 3
+        id: test-3
+        uses: classroom-resources/autograding-io-grader@v1
+        with:
+          test-name: Test 3 (Alexandra)
+          setup-command: ''
+          command: "timeout 0.2 ./build/findsubstr 407b7f337e1e61cc tests/log.txt"
+          input: ""
+          expected-output: "145041"
+          comparison-method: exact
+          timeout: 1
+          max-score: 1
+      - name: Test 4
+        id: test-4
+        uses: classroom-resources/autograding-io-grader@v1
+        with:
+          test-name: Test 4 (Denis)
+          setup-command: ''
+          command: "timeout 0.2 ./build/findsubstr 63678a3245295d9b tests/log.txt"
+          input: ""
+          expected-output: "40147"
+          comparison-method: exact
+          timeout: 1
+          max-score: 1
+      - name: Test 5
+        id: test-5
+        uses: classroom-resources/autograding-io-grader@v1
+        with:
+          test-name: Test 5 (Short test)
+          setup-command: ''
+          command: "timeout 0.2 ./build/findsubstr \"/res/\" tests/log.txt"
+          input: ""
+          expected-output: "314955"
+          comparison-method: exact
+          timeout: 1
+          max-score: 1
+      - name: Test 6
+        id: test-6
+        uses: classroom-resources/autograding-io-grader@v1
+        with:
+          test-name: Test 6 (Absent)
+          setup-command: ''
+          command: "timeout 0.2 ./build/findsubstr \"1a1785d41eb28751\" tests/log.txt"
+          input: ""
+          expected-output: "0"
+          comparison-method: exact
+          timeout: 1
+          max-score: 1
+      - name: Test 7
+        id: test-7
+        uses: classroom-resources/autograding-io-grader@v1
+        with:
+          test-name: Test 7 (Curious)
+          setup-command: ''
+          command: "timeout 0.2 ./build/findsubstr \"7b0373ac13e5c904\" tests/log.txt"
+          input: ""
+          expected-output: "18"
+          comparison-method: exact
+          timeout: 1
+          max-score: 1
+      - name: Test 8
+        id: test-8
+        uses: classroom-resources/autograding-io-grader@v1
+        with:
+          test-name: Test 8 (Browser)
+          setup-command: ''
+          command: "timeout 0.2 ./build/findsubstr \"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.\" tests/log.txt"
+          input: ""
+          expected-output: "166"
+          comparison-method: exact
+          timeout: 1
+          max-score: 1
+      - name: Test 9
+        id: test-9
+        uses: classroom-resources/autograding-io-grader@v1
+        with:
+          test-name: Test 9 (Browser Kit)
+          setup-command: ''
+          command: "timeout 0.2 ./build/findsubstr \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.0.2246 Yowser/2.5 Safari/537.37\" tests/log.txt"
+          input: ""
+          expected-output: "0"
+          comparison-method: exact
+          timeout: 1
+          max-score: 1
+      - name: Test 10
+        id: test-10
+        uses: classroom-resources/autograding-io-grader@v1
+        with:
+          test-name: Test 10 (py)
+          setup-command: ''
+          command: "timeout 0.2 ./build/findsubstr \"python\" tests/log.txt"
+          input: ""
+          expected-output: "298626"
+          comparison-method: exact
+          timeout: 1
+          max-score: 1
+
+      - name: Autograding Reporter
+        uses: classroom-resources/autograding-grading-reporter@v1
+        env:
+          TEST-1_RESULTS: "${{steps.test-1.outputs.result}}"
+          TEST-2_RESULTS: "${{steps.test-2.outputs.result}}"
+          TEST-3_RESULTS: "${{steps.test-3.outputs.result}}"
+          TEST-4_RESULTS: "${{steps.test-4.outputs.result}}"
+          TEST-5_RESULTS: "${{steps.test-5.outputs.result}}"
+          TEST-6_RESULTS: "${{steps.test-6.outputs.result}}"
+          TEST-7_RESULTS: "${{steps.test-7.outputs.result}}"
+          TEST-8_RESULTS: "${{steps.test-8.outputs.result}}"
+          TEST-9_RESULTS: "${{steps.test-9.outputs.result}}"
+          TEST-10_RESULTS: "${{steps.test-10.outputs.result}}"
+        with:
+          runners: test-1,test-2,test-3,test-4,test-5,test-6,test-7,test-8,test-9,test-10
+
+      # - name: Memory leaks
+      #   run: |
+      #        valgrind --tool=memcheck --leak-check=full --undef-value-errors=no --error-exitcode=111 ./build/findsubstr 37df7a98468d1f7a tests/log.txt
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Clean
+        run: |
+             rm -rf ./* || true
+             rm -rf ./.??* || true

@@ -4,7 +4,7 @@
 
 const unsigned long long X = 257;
 const int LINE_MAX_SIZE = 1026;  // 1024 chars + \0 + \n
-const int FILE_BUFFER_SIZE = 1024 * 1024;  // 1 Mb
+const int FILE_BUFFER_SIZE = 16 * 1024 * 1024;  // 1 Mb
 
 
 unsigned long long hash(const char* string, const int string_length) {

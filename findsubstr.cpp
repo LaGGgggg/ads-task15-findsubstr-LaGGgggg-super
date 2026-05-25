@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
   int* prefix = new int[string_target_length];
   build_prefix_function(string_target, string_target_length, prefix);
 
-  char* read_buffer = new char[FILE_BUFFER_SIZE];
+  char read_buffer[FILE_BUFFER_SIZE];
   long long result = 0;
   int matched = 0;
 
@@ -85,7 +85,6 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  delete[] read_buffer;
   delete[] prefix;
 
   std::cout << result << '\n';
